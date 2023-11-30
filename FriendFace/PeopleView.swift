@@ -78,6 +78,7 @@ struct PersonDetailView: View {
         VStack {
             Text(person.id)
             Text(person.name)
+            Text(person.address)
         }
     }
 }
