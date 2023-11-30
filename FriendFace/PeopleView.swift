@@ -29,21 +29,9 @@ struct PeopleView: View {
             case .loading:
                 ProgressView("Loading...")
             case .peopleFound(let people):
-                List {
-                    ForEach(people) { person in
-                        Section(person.id) {
-                            Text(person.name)
-                        }
-                    }
-                }
+                PeopleListView(people: people)
             case .peopleAndJSON(let people, _):
-                List {
-                    ForEach(people) { person in
-                        Section(person.id) {
-                            Text(person.name)
-                        }
-                    }
-                }
+                PeopleListView(people: people)
             default:
                 ContentUnavailableView {
                     Label("Default Switch", systemImage: "exclamationmark.triangle")
@@ -51,6 +39,45 @@ struct PeopleView: View {
                     Text("Not really sure...")
                 }
             }
+        }
+    }
+}
+
+struct PeopleListView: View {
+    
+    let people: [People]
+    
+    var body: some View {
+        List {
+            ForEach(people) { person in
+                Section(person.id) {
+                    NavigationLink {
+                        PersonDetailView(person: person)
+                    } label: {
+                        HStack {
+                            Image(systemName: "person.circle")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 30, height: 30)
+                            Text(person.name)
+                                .font(.title).bold()
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct PersonDetailView: View {
+    
+    let person: People
+    
+    var body: some View {
+        VStack {
+            Text(person.id)
+            Text(person.name)
         }
     }
 }
