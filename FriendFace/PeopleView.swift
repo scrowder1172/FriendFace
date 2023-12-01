@@ -59,6 +59,7 @@ struct PeopleListView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 30, height: 30)
+                                .foregroundStyle(person.isActive ? .black : .red)
                             Text(person.name)
                                 .font(.title).bold()
                         }
@@ -79,6 +80,12 @@ struct PersonDetailView: View {
             Text(person.id)
             Text(person.name)
             Text(person.address)
+            
+            List {
+                ForEach(person.unwrappedFriends) { friend in
+                    Text(friend.name)
+                }
+            }
         }
     }
 }
