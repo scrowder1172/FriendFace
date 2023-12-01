@@ -8,11 +8,25 @@
 import Foundation
 
 enum LoadState {
-    case failed(error: String), peopleFound([People]), ready, rawJSON(json: String), peopleAndJSON([People], json: String), loading
+    case failed(error: String), peopleFound([People]), ready, rawJSON(json: String), peopleAndJSON([People], json: String), loading, done
 }
 
 @Observable
 final class DataController {
+    
+    var people: [People] = [People]()
+    
+    var json: String = ""
+    
+    var searchText: String = ""
+    
+    var filteredPeople: [People] {
+        if searchText.isEmpty {
+            return people
+        } else {
+            return people.filter { $0.name.localizedStandardContains(searchText)}
+        }
+    }
     
     func loadJSON() async -> LoadState {
         let fullURL: String = "https://www.hackingwithswift.com/samples/friendface.json"
@@ -24,27 +38,29 @@ final class DataController {
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
             
-            if let httpResponse = response as? HTTPURLResponse {
-                print("HTTP Status Code: \(httpResponse.statusCode)")
+            guard let httpResponse = response as? HTTPURLResponse else {
+                return .failed(error: "Unable to decode HTTP response")
             }
             
-            guard let responseString = String(data: data, encoding: .utf8) else {
-                return .failed(error: "Unable to parse response string")
-            }
-            
-            //print("Raw JSON: \n\(responseString)")
+            print("HTTP Status Code: \(httpResponse.statusCode)")
             
             let decoder: JSONDecoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
-            let people = try decoder.decode([People].self, from: data)
+            
+            let decodedPeople = try decoder.decode([People].self, from: data)
+            
+            guard let returnedJSON = String(data: data, encoding: .utf8) else {
+                return .failed(error: "Unable to parse response string")
+            }
+            
+            json = returnedJSON
+            people = decodedPeople
             
             for person in people {
                 print(person.name)
             }
             
-//            return .peopleFound(people)
-//            return .rawJSON(json: responseString)
-            return .peopleAndJSON(people, json: responseString)
+            return .done
             
         } catch {
             print(error.localizedDescription)

@@ -10,6 +10,7 @@ import SwiftUI
 struct PeopleView: View {
     
     @Binding var state: LoadState
+    @Binding var dataController: DataController
     
     var body: some View {
         NavigationStack {
@@ -28,10 +29,8 @@ struct PeopleView: View {
                 }
             case .loading:
                 ProgressView("Loading...")
-            case .peopleFound(let people):
-                PeopleListView(people: people)
-            case .peopleAndJSON(let people, _):
-                PeopleListView(people: people)
+            case .done:
+                PeopleListView(dataController: $dataController)
             default:
                 ContentUnavailableView {
                     Label("Default Switch", systemImage: "exclamationmark.triangle")
@@ -41,46 +40,36 @@ struct PeopleView: View {
             }
             
             Text("")
-                .navigationTitle("Friend Face")
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button("Get People", systemImage: "arrow.down.doc") {
-                            Task {
-                                await retrieveJSONData()
-                            }
+            .navigationTitle("Friend Face")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Get People", systemImage: "arrow.down.doc") {
+                        Task {
+                            await retrieveJSONData()
                         }
                     }
-                    
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("Remove People", systemImage: "trash") {
-                            state = .ready
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Menu("Sort", systemImage: "line.3.horizontal.decrease.circle") {
-                            Text("Something soon...")
-                            Text("Something soon...")
-                            Text("Something soon...")
-                            Text("Something soon...")
-                        }
-                    }
-                    
-                    
                 }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Remove People", systemImage: "trash") {
+                        state = .ready
+                    }
+                }
+                
+                
+            }
         }
         
     }
     
     func retrieveJSONData() async {
-        let dc: DataController = DataController()
         
         state = .loading
         
         Task {
             try await Task.sleep(for: .seconds(0.5))
             
-            state = await dc.loadJSON()
+            state = await dataController.loadJSON()
         }
         
     }
@@ -88,24 +77,14 @@ struct PeopleView: View {
 
 struct PeopleListView: View {
     
-    let people: [People]
-    
-    @State private var searchText: String = ""
-    
-    var filteredPeople: [People] {
-        if searchText.isEmpty {
-            return people
-        } else {
-            return people.filter { $0.name.localizedStandardContains(searchText)}
-        }
-    }
+    @Binding var dataController: DataController
     
     var body: some View {
-        TextField("user search", text: $searchText)
+        TextField("user search", text: $dataController.searchText)
             .textFieldStyle(.roundedBorder)
             .padding(.horizontal)
         List {
-            ForEach(filteredPeople) { person in
+            ForEach(dataController.filteredPeople) { person in
                 Section(person.id) {
                     NavigationLink {
                         PersonDetailView(person: person)
@@ -148,5 +127,5 @@ struct PersonDetailView: View {
 }
 
 #Preview {
-    PeopleView(state: .constant(.ready))
+    PeopleView(state: .constant(.ready), dataController: .constant(DataController()))
 }

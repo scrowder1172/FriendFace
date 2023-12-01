@@ -12,10 +12,12 @@ struct ContentView: View {
     
     @State private var state: LoadState = .ready
     
+    @State private var dataController: DataController = DataController()
+    
     var body: some View {
         
         TabView {
-            PeopleView(state: $state)
+            PeopleView(state: $state, dataController: $dataController)
             .tabItem { Label("People", systemImage: "person.3") }
             
             JSONView(state: $state)
