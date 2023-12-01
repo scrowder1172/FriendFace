@@ -11,8 +11,10 @@ struct PeopleView: View {
     
     @Binding var state: LoadState
     
+    @State private var searchText: String = ""
+    
     var body: some View {
-        Group {
+        NavigationStack {
             switch state {
             case .ready:
                 ContentUnavailableView {
@@ -29,9 +31,9 @@ struct PeopleView: View {
             case .loading:
                 ProgressView("Loading...")
             case .peopleFound(let people):
-                PeopleListView(people: people)
+                PeopleListView(people: people, searchText: $searchText)
             case .peopleAndJSON(let people, _):
-                PeopleListView(people: people)
+                PeopleListView(people: people, searchText: $searchText)
             default:
                 ContentUnavailableView {
                     Label("Default Switch", systemImage: "exclamationmark.triangle")
@@ -39,7 +41,50 @@ struct PeopleView: View {
                     Text("Not really sure...")
                 }
             }
+            
+            Text("")
+                .navigationTitle("Friend Face")
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Get People", systemImage: "arrow.down.doc") {
+                            Task {
+                                await retrieveJSONData()
+                            }
+                        }
+                    }
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Remove People", systemImage: "trash") {
+                            state = .ready
+                        }
+                    }
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Menu("Sort", systemImage: "line.3.horizontal.decrease.circle") {
+                            Text("Something soon...")
+                            Text("Something soon...")
+                            Text("Something soon...")
+                            Text("Something soon...")
+                        }
+                    }
+                    
+                    
+                }
         }
+        
+    }
+    
+    func retrieveJSONData() async {
+        let dc: DataController = DataController()
+        
+        state = .loading
+        
+        Task {
+            try await Task.sleep(for: .seconds(0.5))
+            
+            state = await dc.loadJSON()
+        }
+        
     }
 }
 
@@ -47,7 +92,12 @@ struct PeopleListView: View {
     
     let people: [People]
     
+    @Binding var searchText: String
+    
     var body: some View {
+        TextField("user search", text: $searchText)
+            .textFieldStyle(.roundedBorder)
+            .padding(.horizontal)
         List {
             ForEach(people) { person in
                 Section(person.id) {

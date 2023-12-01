@@ -12,7 +12,8 @@ struct JSONView: View {
     @Binding var state: LoadState
     
     var body: some View {
-        Group {
+        NavigationStack {
+            Group {
                 switch state {
                 case .rawJSON(let jsonData):
                     ScrollView {
@@ -30,6 +31,8 @@ struct JSONView: View {
                     }
                 }
             }
+            .navigationTitle("JSON View")
+        }
     }
 }
 
