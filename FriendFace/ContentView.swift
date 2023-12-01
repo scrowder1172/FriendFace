@@ -37,6 +37,11 @@ struct ContentView: View {
                 }
                 
             }
+            .onAppear {
+                Task {
+                    await retrieveJSONData()
+                }
+            }
         }
         
     }
