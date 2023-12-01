@@ -80,6 +80,7 @@ struct PersonDetailView: View {
             Text(person.id)
             Text(person.name)
             Text(person.address)
+            Text(person.registered.formatted(date: .long, time: .standard))
             
             List {
                 ForEach(person.unwrappedFriends) { friend in

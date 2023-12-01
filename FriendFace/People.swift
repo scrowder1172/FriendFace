@@ -18,6 +18,7 @@ struct People: Codable, Identifiable {
     var about: String
     var tags: [String]
     var isActive: Bool
+    var registered: Date
     
     @Relationship(deleteRule: .cascade) var friends: [Friends]? = [Friends]()
     

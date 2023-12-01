@@ -35,6 +35,7 @@ final class DataController {
             //print("Raw JSON: \n\(responseString)")
             
             let decoder: JSONDecoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
             let people = try decoder.decode([People].self, from: data)
             
             for person in people {
