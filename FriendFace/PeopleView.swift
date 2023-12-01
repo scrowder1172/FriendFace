@@ -11,8 +11,6 @@ struct PeopleView: View {
     
     @Binding var state: LoadState
     
-    @State private var searchText: String = ""
-    
     var body: some View {
         NavigationStack {
             switch state {
@@ -31,9 +29,9 @@ struct PeopleView: View {
             case .loading:
                 ProgressView("Loading...")
             case .peopleFound(let people):
-                PeopleListView(people: people, searchText: $searchText)
+                PeopleListView(people: people)
             case .peopleAndJSON(let people, _):
-                PeopleListView(people: people, searchText: $searchText)
+                PeopleListView(people: people)
             default:
                 ContentUnavailableView {
                     Label("Default Switch", systemImage: "exclamationmark.triangle")
@@ -92,14 +90,22 @@ struct PeopleListView: View {
     
     let people: [People]
     
-    @Binding var searchText: String
+    @State private var searchText: String = ""
+    
+    var filteredPeople: [People] {
+        if searchText.isEmpty {
+            return people
+        } else {
+            return people.filter { $0.name.localizedStandardContains(searchText)}
+        }
+    }
     
     var body: some View {
         TextField("user search", text: $searchText)
             .textFieldStyle(.roundedBorder)
             .padding(.horizontal)
         List {
-            ForEach(people) { person in
+            ForEach(filteredPeople) { person in
                 Section(person.id) {
                     NavigationLink {
                         PersonDetailView(person: person)
