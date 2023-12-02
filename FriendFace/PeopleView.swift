@@ -125,19 +125,53 @@ struct PersonDetailView: View {
     
     let person: People
     
+    let columns = [
+        GridItem(.adaptive(minimum: 150))
+    ]
+    
     var body: some View {
         VStack {
-            Text(person.id)
-            Text(person.name)
-            Text(person.address)
-            Text(person.registered.formatted(date: .long, time: .standard))
+            Image(systemName: "face.smiling")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 100, height: 100)
+                .padding()
             
-            List {
-                ForEach(person.unwrappedFriends) { friend in
-                    Text(friend.name)
+            VStack(alignment: .leading) {
+                Text(person.name)
+                    .font(.title)
+                
+                
+                Text(person.address)
+                    .font(.callout)
+                
+                Text(person.registered.formatted(date: .abbreviated, time: .standard))
+                    .font(.callout)
+            }
+            
+            
+            ScrollView {
+                LazyVGrid (columns: columns) {
+                    ForEach(person.unwrappedFriends) { friend in
+                        VStack {
+                            Image(systemName: "person.circle")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 100, height: 100)
+                                .padding()
+                            
+                            Text(friend.name)
+                                .font(.caption)
+                        }
+                        .padding(.vertical)
+                        .frame(maxWidth: .infinity)
+                        .background(.cyan)
+                    }
                 }
             }
+            
         }
+        .padding(.horizontal)
     }
 }
 
