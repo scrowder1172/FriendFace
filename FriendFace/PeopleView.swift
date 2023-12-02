@@ -10,6 +10,8 @@ import SwiftUI
 struct PeopleView: View {
     @Binding var dataController: DataController
     
+    @State private var filterActiveUsers: Bool = false
+    
     var body: some View {
         NavigationStack {
             switch dataController.state {
@@ -54,7 +56,22 @@ struct PeopleView: View {
                     }
                 }
                 
-                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu("Sort", systemImage: "line.3.horizontal.decrease.circle") {
+                        Picker("Sort", selection: $dataController.sortOption) {
+                            ForEach(DataController.SortOption.allCases) { option in
+                                Text(option.rawValue).tag(option)
+                            }
+                        }
+                        .onChange(of: dataController.sortOption) {
+                            dataController.sortPeople()
+                        }
+                        
+                        Button(dataController.filterActiveUsers ? "Show Everyone" : "Show Active Users Only") {
+                            dataController.filterActiveUsers.toggle()
+                        }
+                    }
+                }
             }
         }
         
