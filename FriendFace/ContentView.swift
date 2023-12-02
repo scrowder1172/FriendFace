@@ -10,17 +10,15 @@ import UIKit
 
 struct ContentView: View {
     
-    @State private var state: LoadState = .ready
-    
     @State private var dataController: DataController = DataController()
     
     var body: some View {
         
         TabView {
-            PeopleView(state: $state, dataController: $dataController)
+            PeopleView(dataController: $dataController)
             .tabItem { Label("People", systemImage: "person.3") }
             
-            JSONView(state: $state)
+            JSONView(dataController: $dataController)
             .tabItem { Label("JSON", systemImage: "plus")}
         }
     }

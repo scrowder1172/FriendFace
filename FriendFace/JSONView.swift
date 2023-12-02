@@ -9,20 +9,14 @@ import SwiftUI
 
 struct JSONView: View {
     
-    @Binding var state: LoadState
+    @Binding var dataController: DataController
     
     var body: some View {
         NavigationStack {
             Group {
-                switch state {
-                case .rawJSON(let jsonData):
-                    ScrollView {
-                        Text(jsonData)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding()
-                    }
-                case .peopleAndJSON(_, let jsonData):
-                    UITextViewWrapper(text: jsonData)
+                switch dataController.state {
+                case .done:
+                    UITextViewWrapper(text: dataController.json)
                 default:
                     ContentUnavailableView {
                         Label("JSON Data", systemImage: "desktopcomputer.and.arrow.down")
@@ -37,5 +31,5 @@ struct JSONView: View {
 }
 
 #Preview {
-    JSONView(state: .constant(.ready))
+    JSONView(dataController: .constant(DataController()))
 }

@@ -8,13 +8,11 @@
 import SwiftUI
 
 struct PeopleView: View {
-    
-    @Binding var state: LoadState
     @Binding var dataController: DataController
     
     var body: some View {
         NavigationStack {
-            switch state {
+            switch dataController.state {
             case .ready:
                 ContentUnavailableView {
                     Label("JSON Data", systemImage: "person.3")
@@ -52,7 +50,7 @@ struct PeopleView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Remove People", systemImage: "trash") {
-                        state = .ready
+                        dataController.state = .ready
                     }
                 }
                 
@@ -64,12 +62,12 @@ struct PeopleView: View {
     
     func retrieveJSONData() async {
         
-        state = .loading
+        dataController.state = .loading
         
         Task {
             try await Task.sleep(for: .seconds(0.5))
             
-            state = await dataController.loadJSON()
+            dataController.state = await dataController.loadJSON()
         }
         
     }
@@ -127,5 +125,5 @@ struct PersonDetailView: View {
 }
 
 #Preview {
-    PeopleView(state: .constant(.ready), dataController: .constant(DataController()))
+    PeopleView(dataController: .constant(DataController()))
 }

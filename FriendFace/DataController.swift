@@ -20,6 +20,8 @@ final class DataController {
     
     var searchText: String = ""
     
+    var state: LoadState = .ready
+    
     var filteredPeople: [People] {
         if searchText.isEmpty {
             return people
