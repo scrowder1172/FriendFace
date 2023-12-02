@@ -14,6 +14,17 @@ enum LoadState {
 @Observable
 final class DataController {
     
+    enum SortOption: String, CaseIterable, Identifiable {
+        case nameAscending = "Name Ascending"
+        case nameDescending = "Name Descending"
+        case idAscending = "ID Ascending"
+        case idDecending = "ID Decending"
+        case registeredAscending = "Registration Date Ascending"
+        case registeredDescending = "Registration Date Descending"
+
+        var id: String { self.rawValue }
+    }
+    
     var people: [People] = [People]()
     
     var json: String = ""
@@ -22,13 +33,28 @@ final class DataController {
     
     var state: LoadState = .ready
     
+    var sortOption: SortOption = .nameAscending
+    
+    var filterActiveUsers: Bool = false
+
     var filteredPeople: [People] {
         if searchText.isEmpty {
-            return people
+            if filterActiveUsers {
+                return people.filter { $0.isActive == true}
+            } else {
+                return people
+            }
         } else {
-            return people.filter { $0.name.localizedStandardContains(searchText)}
+            if filterActiveUsers {
+                return people.filter {
+                    $0.name.localizedStandardContains(searchText) && $0.isActive == true
+                }
+            } else {
+                return people.filter { $0.name.localizedStandardContains(searchText)}
+            }
         }
     }
+
     
     func loadJSON() async -> LoadState {
         let fullURL: String = "https://www.hackingwithswift.com/samples/friendface.json"
@@ -62,11 +88,30 @@ final class DataController {
                 print(person.name)
             }
             
+            sortPeople()
+            
             return .done
             
         } catch {
             print(error.localizedDescription)
             return .failed(error: error.localizedDescription)
+        }
+    }
+    
+    func sortPeople() {
+        switch sortOption {
+        case .nameAscending:
+            people.sort { $0.name < $1.name }
+        case .nameDescending:
+            people.sort { $0.name > $1.name }
+        case .idAscending:
+            people.sort { $0.id < $1.id }
+        case .idDecending:
+            people.sort { $0.id > $1.id }
+        case .registeredAscending:
+            people.sort { $0.registered < $1.registered }
+        case .registeredDescending:
+            people.sort { $0.registered > $1.registered }
         }
     }
 }
