@@ -123,7 +123,7 @@ struct PeopleListView: View {
 
 struct PersonDetailView: View {
     
-    let person: People
+    let person: Users
     let dc: DataController
     
     let columns = [

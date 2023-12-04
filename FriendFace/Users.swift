@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-struct People: Codable, Identifiable {
+struct Users: Codable, Identifiable {
     var id: String
     var name: String
     var address: String
@@ -38,9 +38,9 @@ struct Tags: Codable {
 struct Friends: Codable, Identifiable {
     var id: String
     var name: String
-    var person: People?
+    var person: Users?
     
-    init(id: String, name: String, person: People? = nil) {
+    init(id: String, name: String, person: Users? = nil) {
         self.id = id
         self.name = name
         self.person = person

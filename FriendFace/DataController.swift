@@ -8,7 +8,7 @@
 import Foundation
 
 enum LoadState {
-    case failed(error: String), peopleFound([People]), ready, rawJSON(json: String), peopleAndJSON([People], json: String), loading, done
+    case failed(error: String), peopleFound([Users]), ready, rawJSON(json: String), peopleAndJSON([Users], json: String), loading, done
 }
 
 @Observable
@@ -25,7 +25,7 @@ final class DataController {
         var id: String { self.rawValue }
     }
     
-    var people: [People] = [People]()
+    var people: [Users] = [Users]()
     
     var json: String = ""
     
@@ -37,7 +37,7 @@ final class DataController {
     
     var filterActiveUsers: Bool = false
 
-    var filteredPeople: [People] {
+    var filteredPeople: [Users] {
         if searchText.isEmpty {
             if filterActiveUsers {
                 return people.filter { $0.isActive == true}
@@ -75,7 +75,7 @@ final class DataController {
             let decoder: JSONDecoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             
-            let decodedPeople = try decoder.decode([People].self, from: data)
+            let decodedPeople = try decoder.decode([Users].self, from: data)
             
             guard let returnedJSON = String(data: data, encoding: .utf8) else {
                 return .failed(error: "Unable to parse response string")

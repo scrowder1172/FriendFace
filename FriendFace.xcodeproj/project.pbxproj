@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		52172A4B2B1935E400117CFD /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52172A4A2B1935E400117CFD /* DataController.swift */; };
-		52172A4D2B19361B00117CFD /* People.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52172A4C2B19361B00117CFD /* People.swift */; };
+		52172A4D2B19361B00117CFD /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52172A4C2B19361B00117CFD /* Users.swift */; };
 		52172A4F2B19364500117CFD /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52172A4E2B19364500117CFD /* PeopleView.swift */; };
 		52172A512B19375300117CFD /* JSONView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52172A502B19375300117CFD /* JSONView.swift */; };
 		52172A532B19387500117CFD /* MiscViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52172A522B19387500117CFD /* MiscViews.swift */; };
@@ -20,7 +20,7 @@
 
 /* Begin PBXFileReference section */
 		52172A4A2B1935E400117CFD /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
-		52172A4C2B19361B00117CFD /* People.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = People.swift; sourceTree = "<group>"; };
+		52172A4C2B19361B00117CFD /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 		52172A4E2B19364500117CFD /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
 		52172A502B19375300117CFD /* JSONView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONView.swift; sourceTree = "<group>"; };
 		52172A522B19387500117CFD /* MiscViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiscViews.swift; sourceTree = "<group>"; };
@@ -64,7 +64,7 @@
 				52618D0C2B191B8100A30330 /* FriendFaceApp.swift */,
 				52618D0E2B191B8100A30330 /* ContentView.swift */,
 				52172A4A2B1935E400117CFD /* DataController.swift */,
-				52172A4C2B19361B00117CFD /* People.swift */,
+				52172A4C2B19361B00117CFD /* Users.swift */,
 				52172A4E2B19364500117CFD /* PeopleView.swift */,
 				52172A502B19375300117CFD /* JSONView.swift */,
 				52172A522B19387500117CFD /* MiscViews.swift */,
@@ -153,7 +153,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				52172A512B19375300117CFD /* JSONView.swift in Sources */,
-				52172A4D2B19361B00117CFD /* People.swift in Sources */,
+				52172A4D2B19361B00117CFD /* Users.swift in Sources */,
 				52172A4F2B19364500117CFD /* PeopleView.swift in Sources */,
 				52618D0F2B191B8100A30330 /* ContentView.swift in Sources */,
 				52172A4B2B1935E400117CFD /* DataController.swift in Sources */,
