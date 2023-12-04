@@ -13,7 +13,7 @@ struct PeopleView: View {
     @State private var filterActiveUsers: Bool = false
     
     var body: some View {
-        NavigationStack {
+        NavigationStack() {
             switch dataController.state {
             case .ready:
                 ContentUnavailableView {
@@ -102,7 +102,7 @@ struct PeopleListView: View {
             ForEach(dataController.filteredPeople) { person in
                 Section(person.id) {
                     NavigationLink {
-                        PersonDetailView(person: person)
+                        PersonDetailView(person: person, dc: dataController)
                     } label: {
                         HStack {
                             Image(systemName: "person.circle")
@@ -124,6 +124,7 @@ struct PeopleListView: View {
 struct PersonDetailView: View {
     
     let person: People
+    let dc: DataController
     
     let columns = [
         GridItem(.adaptive(minimum: 150))
@@ -153,15 +154,23 @@ struct PersonDetailView: View {
             ScrollView {
                 LazyVGrid (columns: columns) {
                     ForEach(person.unwrappedFriends) { friend in
-                        VStack {
-                            Image(systemName: "person.circle")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 100, height: 100)
-                                .padding()
-                            
-                            Text(friend.name)
-                                .font(.caption)
+                        NavigationLink {
+                            ForEach(dc.people) {person in
+                                if friend.id == person.id {
+                                    PersonDetailView(person: person, dc: dc)
+                                }
+                            }
+                        } label: {
+                            VStack {
+                                Image(systemName: "person.circle")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 100, height: 100)
+                                    .padding()
+                                
+                                Text(friend.name)
+                                    .font(.caption)
+                            }
                         }
                         .padding(.vertical)
                         .frame(maxWidth: .infinity)
