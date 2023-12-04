@@ -19,8 +19,7 @@ struct Users: Codable, Identifiable {
     var tags: [String]
     var isActive: Bool
     var registered: Date
-    
-    @Relationship(deleteRule: .cascade) var friends: [Friends]? = [Friends]()
+    var friends: [Friends]?
     
     var unwrappedFriends: [Friends] {
         friends ?? []
@@ -38,12 +37,4 @@ struct Tags: Codable {
 struct Friends: Codable, Identifiable {
     var id: String
     var name: String
-    var person: Users?
-    
-    init(id: String, name: String, person: Users? = nil) {
-        self.id = id
-        self.name = name
-        self.person = person
-    }
-    
 }
