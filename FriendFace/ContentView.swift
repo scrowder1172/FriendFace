@@ -15,7 +15,7 @@ struct ContentView: View {
     var body: some View {
         
         TabView {
-            PeopleView(dataController: $dataController)
+            PeopleView()
             .tabItem { Label("People", systemImage: "person.3") }
             
             JSONView(dataController: $dataController)

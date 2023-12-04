@@ -8,34 +8,36 @@
 import SwiftUI
 
 struct PeopleView: View {
-    @Binding var dataController: DataController
+    @Environment(DataController.self) var dataController
     
     @State private var filterActiveUsers: Bool = false
     
     var body: some View {
         NavigationStack() {
-            switch dataController.state {
-            case .ready:
-                ContentUnavailableView {
-                    Label("JSON Data", systemImage: "person.3")
-                } description: {
-                    Text("Click button to load people...")
-                }
-            case .failed(let message):
-                ContentUnavailableView {
-                    Label("Load Results", systemImage: "exclamationmark.triangle")
-                } description: {
-                    Text("Error: \(message)")
-                }
-            case .loading:
-                ProgressView("Loading...")
-            case .done:
-                PeopleListView(dataController: $dataController)
-            default:
-                ContentUnavailableView {
-                    Label("Default Switch", systemImage: "exclamationmark.triangle")
-                } description: {
-                    Text("Not really sure...")
+            Group {
+                switch dataController.state {
+                case .ready:
+                    ContentUnavailableView {
+                        Label("User Data Missing", systemImage: "person.3")
+                    } description: {
+                        Text("Click button to download users...")
+                    }
+                case .failed(let message):
+                    ContentUnavailableView {
+                        Label("Load Results", systemImage: "exclamationmark.triangle")
+                    } description: {
+                        Text("Error: \(message)")
+                    }
+                case .loading:
+                    ProgressView("Loading...")
+                case .done:
+                    PeopleListView()
+                default:
+                    ContentUnavailableView {
+                        Label("Default Switch", systemImage: "exclamationmark.triangle")
+                    } description: {
+                        Text("Not really sure...")
+                    }
                 }
             }
             
@@ -57,20 +59,7 @@ struct PeopleView: View {
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    Menu("Sort", systemImage: "line.3.horizontal.decrease.circle") {
-                        Picker("Sort", selection: $dataController.sortOption) {
-                            ForEach(DataController.SortOption.allCases) { option in
-                                Text(option.rawValue).tag(option)
-                            }
-                        }
-                        .onChange(of: dataController.sortOption) {
-                            dataController.sortPeople()
-                        }
-                        
-                        Button(dataController.filterActiveUsers ? "Show Everyone" : "Show Active Users Only") {
-                            dataController.filterActiveUsers.toggle()
-                        }
-                    }
+                    MenuSubView(dc: dataController)
                 }
             }
         }
@@ -90,41 +79,102 @@ struct PeopleView: View {
     }
 }
 
+struct MenuSubView: View {
+    
+    @Bindable var dc: DataController
+    var body: some View {
+        
+        Menu("Sort", systemImage: "line.3.horizontal.decrease.circle") {
+            Picker("Sort", selection: $dc.sortOption) {
+                ForEach(DataController.SortOption.allCases) { option in
+                    Text(option.rawValue).tag(option)
+                }
+            }
+                .onChange(of: dc.sortOption) {
+                    dc.sortPeople()
+                }
+            
+            Button(dc.filterActiveUsers ? "Show Everyone" : "Show Active Users Only") {
+                dc.filterActiveUsers.toggle()
+            }
+        }
+        
+        
+    }
+}
+
 struct PeopleListView: View {
     
-    @Binding var dataController: DataController
+//    @Binding var dataController: DataController
+    @Environment(DataController.self) var dataController
+    
+    @State private var isActiveExpanded: Bool = false
+    @State private var isInactiveExpanded: Bool = false
     
     var body: some View {
-        TextField("user search", text: $dataController.searchText)
-            .textFieldStyle(.roundedBorder)
-            .padding(.horizontal)
+        TextFieldSubView(dc: dataController)
         List {
-            ForEach(dataController.filteredPeople) { person in
-                Section(person.id) {
-                    NavigationLink {
-                        PersonDetailView(person: person, dc: dataController)
-                    } label: {
-                        HStack {
-                            Image(systemName: "person.circle")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 30, height: 30)
-                                .foregroundStyle(person.isActive ? .black : .red)
-                            Text(person.name)
-                                .font(.title).bold()
+            
+            DisclosureGroup("Active", isExpanded: $isActiveExpanded) {
+                ForEach(dataController.filteredPeople) { person in
+                    if person.isActive {
+                        NavigationLink {
+                            PersonDetailView(person: person)
+                        } label: {
+                            HStack {
+                                Image(systemName: "person.circle")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundStyle(person.isActive ? .green : .red)
+                                Text(person.name)
+                            }
+                            
                         }
-                        
                     }
                 }
             }
+            if !dataController.filterActiveUsers {
+                DisclosureGroup("Inactive", isExpanded: $isInactiveExpanded) {
+                    ForEach(dataController.filteredPeople) { person in
+                        if !person.isActive {
+                            NavigationLink {
+                                PersonDetailView(person: person)
+                            } label: {
+                                HStack {
+                                    Image(systemName: "person.circle")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 30, height: 30)
+                                        .foregroundStyle(person.isActive ? .green : .red)
+                                    Text(person.name)
+                                }
+                                
+                            }
+                        }
+                    }
+                }
+            }
+            
+            
         }
+    }
+}
+
+struct TextFieldSubView: View {
+    @Bindable var dc: DataController
+    var body: some View {
+        TextField("user search", text: $dc.searchText)
+            .textFieldStyle(.roundedBorder)
+            .padding(.horizontal)
     }
 }
 
 struct PersonDetailView: View {
     
+    @Environment(DataController.self) private var dc
+    
     let person: Users
-    let dc: DataController
     
     let columns = [
         GridItem(.adaptive(minimum: 150))
@@ -157,7 +207,7 @@ struct PersonDetailView: View {
                         NavigationLink {
                             ForEach(dc.people) {person in
                                 if friend.id == person.id {
-                                    PersonDetailView(person: person, dc: dc)
+                                    PersonDetailView(person: person)
                                 }
                             }
                         } label: {
@@ -185,5 +235,6 @@ struct PersonDetailView: View {
 }
 
 #Preview {
-    PeopleView(dataController: .constant(DataController()))
+    PeopleView()
+        .environment(DataController())
 }
