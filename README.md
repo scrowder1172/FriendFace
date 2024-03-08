@@ -1,8 +1,8 @@
-# Milestone Project: FriendFace
+# Milestone 05: FriendFace
 
-## Hacking With Swift milestone project
+## Hacking With Swift Milestone
 
-This is a milestone project in Paul Hudson's 100 Days of SwiftUI course. This project creates an iOS app that uses an API on a remote server to download JSON data and create a UI for users to document their friends.
+This is Milestone 05 in Paul Hudson's 100 Days of SwiftUI course. This project creates an iOS app that uses an API on a remote server to download JSON data and create a UI for users to document their friends.
 
 ## Course Link
 
